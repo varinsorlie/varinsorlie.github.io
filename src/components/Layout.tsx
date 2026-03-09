@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "motion/react";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 
 type Locale = "en" | "no";
@@ -49,7 +49,7 @@ export function useLanguage() {
   return useContext(LanguageContext);
 }
 
-export function Layout(props: { children?: React.ReactNode }) {
+export function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const [locale, setLocale] = useState<Locale>(() => {

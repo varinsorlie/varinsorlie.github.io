@@ -1,25 +1,7 @@
-// import { useNavigate } from 'react-router-dom';
 
-// export default function Homepage(){
-//     const navigate = useNavigate();
-//     const goToHomePage = () => {
-//     // Naviger til biblioteksiden
-//     navigate(`/`);
-//   };
-//     return(
-//         <div>
-//             <p>
-//             Library
-//             </p>
-//             <div className="homepage-card" onClick={() => goToHomePage()}>
-//                 <p>go to homepage</p>
-//             </div> 
-//         </div>
-//     )
-// }
 
 import { Link } from "react-router-dom";
-import { ArrowUpRight, FileText, Github, Twitter, Mail, Linkedin } from "lucide-react";
+import { ArrowUpRight, FileText, Github, Mail, Linkedin } from "lucide-react";
 import { motion } from "motion/react";
 import { allLists } from "./list-data";
 import { ImageWithFallback } from "./figma/ImageWithFallback";

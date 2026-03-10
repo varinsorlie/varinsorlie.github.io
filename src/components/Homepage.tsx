@@ -100,7 +100,7 @@ export default function Home() {
              { label: t("Resume"), icon: FileText, href: cv },
               { label: t("Github"), icon: Github, href: "https://github.com/varinsorlie" },
               { label: t("Linkedin"), icon: Linkedin, href: "https://www.linkedin.com/in/vårin-sørlie" },
-              { label: t("Email"), icon: Mail, href: "#" },
+              { label: t("Email"), icon: Mail, href: "mailto:vaarinso@uio.no" },
             ].map((link) => (
               <a
                 key={link.label}

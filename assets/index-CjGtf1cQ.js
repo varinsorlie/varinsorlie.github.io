@@ -22,7 +22,7 @@ Please change the parent <Route path="${O}"> to <Route path="${O==="/"?"*":`${O}
       rounded-full 
       overflow-hidden 
       border border-border 
-      cursor-pointer gap-4`,children:D.jsx("img",{src:a,className:"w-full h-full object-cover"})})}const D0="http://localhost:3000";async function gC(){const a=await fetch(`${D0}/lists`);if(!a.ok)throw new Error("Failed to fetch lists");return a.json()}async function yC(a){const i=await fetch(`${D0}/lists/${a}`);if(!i.ok)throw new Error("List not found");return i.json()}function vC(){const a=[rC,oC,uC,cC],{t:i}=hC(),s=(f,d)=>{f?.preventDefault();const m=window.open("","_blank");if(!m)return;const g=`
+      cursor-pointer gap-4`,children:D.jsx("img",{src:a,className:"w-full h-full object-cover"})})}const D0="https://varinsorlie-github-io.onrender.com";async function gC(){const a=await fetch(`${D0}/lists`);if(!a.ok)throw new Error("Failed to fetch lists");return a.json()}async function yC(a){const i=await fetch(`${D0}/lists/${a}`);if(!i.ok)throw new Error("List not found");return i.json()}function vC(){const a=[rC,oC,uC,cC],{t:i}=hC(),s=(f,d)=>{f?.preventDefault();const m=window.open("","_blank");if(!m)return;const g=`
       <!doctype html>
       <html>
         <head>

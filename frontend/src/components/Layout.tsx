@@ -1,18 +1,20 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { motion } from "motion/react";
 import { createContext, useContext, useEffect, useState } from "react";
 import NavItem from "./NavItem.js";
-import cv from "../assets/cv_march26.pdf"
 
 type Locale = "en" | "no";
 
 const translations: Record<Locale, Record<string, string>> = {
   en: {
     greeting: "Vårin Sørlie",
+    greeting2: "Welcome!",
     subtitle: "Designer, developer, and professional over-thinker.",
     intro:
       "This site is part portfolio, part personal encyclopedia of opinions. Welcome!",
     curatedLists: "Recently posted",
+    about: "Hello! I'm Vårin and i am currently in my first year of the Master’s degree in Informatics: Programming and System Architecture at the University of Oslo. I recently finished a Bachelor’s degree in Informatics: Design, use and interaction, also at UiO. This is my personal website, and i will post a lot of random things that I find intersting and fun! Enjoy!",
     resume: "Resume",
     github: "GitHub",
     linkedin: "LinkedIn",
@@ -21,10 +23,12 @@ const translations: Record<Locale, Record<string, string>> = {
   },
   no: {
     greeting: "Vårin Sørlie",
+    greeting2: "Velkommen!",
     subtitle: "Designer, utvikler, og livsnyter.",
     intro:
       "Dette er litt som en portfølje, og litt som en samling av tilfeldige ting som interesserer meg. Velkommen!",
     curatedLists: "Nylig postet",
+    about: "Hei! Jeg heter Vårin, og jeg går for tiden første året på masterstudiet i informatikk: programmering og systemarkitektur ved Universitetet i Oslo. Jeg har nylig fullført en bachelorgrad i informatikk: design, bruk og interaksjon, også ved UiO. Dette er min personlige nettside, og jeg kommer til å poste mange tilfeldige ting som jeg synes er interessante og morsomme! Kos deg!",
     resume: "CV",
     github: "GitHub",
     linkedin: "LinkedIn",
@@ -52,6 +56,7 @@ export function useLanguage() {
 export function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const isMapPage = location.pathname === "/mapPage";
   const [locale, setLocale] = useState<Locale>(() => {
   const stored = typeof window !== "undefined" && localStorage.getItem("locale");
     return (stored as Locale) || "en";
@@ -71,20 +76,28 @@ export function Layout() {
      {/* NAV */}
       <div className="relative flex flex-col items-center mb-5 pt-5">
 
-        {/* Navigation row */}
+        {/* Navigation row (hide on MapPage*/}
+      {!isMapPage && (
         <div className="fixed bg-transparent flex gap-2 whitespace-nowrap z-50">
           <NavItem to="/">Home</NavItem>
-
-          {/* <a href={cv} target="_blank" className="flex flex-col items-center gap-2">
-            <div className="h-[2px] w-8 opacity-0" /> */}
-            {/* <div className="nav-pill">Resume</div> */}
-            <NavItem to="/cvPage">Resume</NavItem>
-          {/* </a> */}
-
-          <NavItem to="/blog">Blog</NavItem>
-          <NavItem to="/travelPage">Travel</NavItem>
+          <NavItem to="/cvPage">Resume</NavItem>
+          <NavItem to="/travelPage">Blog</NavItem>
+           <NavItem to="/mapPage">Map</NavItem>
         </div>
+      )}
 
+      {/* BACK BUTTON — only on MapPage */}
+     {isMapPage && (
+       <div className="fixed top-4 left-4 z-50">
+         <Link
+           to="/"
+           className="flex items-center gap-2 px-4 py-2 bg-background backdrop-blur-sm rounded-full border border-border hover:bg-foreground hover:text-background transition-all"
+         >
+           <ArrowLeft className="w-4 h-4" />
+           <span className="text-sm">Back</span>
+         </Link>
+       </div>
+     )}
         {/* Language button */}
         {/* <div className=" sm:right-5 sm:top-2.5 pt-5 fixed bg-transparent flex gap-2 whitespace-nowrap z-50">
           <div className="nav-pill">

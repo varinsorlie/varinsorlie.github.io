@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { getTravelTips } from "../data/api.js"
-import TravelDetailPage from "./TravelDetailPage.js"
+import { getLists } from "../data/api.js"
+import { allLists as staticLists } from "./list-data.js"
+import { ArrowUpRight } from "lucide-react"
+import { motion } from "motion/react"
 // ── Types ──────────────────────────────────────────────────────
 interface Destination {
   city: string
@@ -133,9 +136,6 @@ function FeaturedCard({ tip }: { tip: TravelTip }) {
 // ── Grid card ──────────────────────────────────────────────────
 function TravelCard({ tip, index }: { tip: TravelTip; index: number }) {
   const { ref, inView } = useInView()
-  const regionColor = tip.destination?.region
-    ? (REGION_COLORS[tip.destination.region] ?? "#888")
-    : "#888"
 
   return (
     <div
@@ -143,57 +143,22 @@ function TravelCard({ tip, index }: { tip: TravelTip; index: number }) {
       style={{ transitionDelay: `${index * 75}ms` }}
       className={`transition-all duration-700 ease-out ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
     >
-      <Link to={`/travel/${tip.slug}`} className="group block">
+      <Link to={`/travel/${tip.slug}`} className="group rounded-xl overflow-hidden bg-white p-4 hover:shadow-md transition">
         {/* Image */}
-        <div className="rounded-2xl overflow-hidden aspect-[4/3] mb-4 relative">
+        <div className="aspect-video rounded-xl overflow-hidden mb-3">
           <img
             src={tip.image}
             alt={tip.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          {tip.destination && (
-            <span
-              className="absolute top-3 left-3 text-white text-[0.62rem] tracking-widest uppercase px-2.5 py-1 rounded-full font-medium"
-              style={{ background: regionColor }}
-            >
-              {tip.destination.region}
-            </span>
-          )}
-          {tip.items.filter(i => i.essential).length > 0 && (
-            <span className="absolute top-3 right-3 bg-black/55 text-white text-[0.62rem] tracking-wide px-2.5 py-1 rounded-full">
-              ⚡ {tip.items.filter(i => i.essential).length} must-knows
-            </span>
-          )}
         </div>
 
         {/* Body */}
         <div>
-          {tip.destination && (
-            <p className="text-[0.68rem] tracking-[.18em] uppercase opacity-40 mb-1">
-              {tip.destination.city}, {tip.destination.country}
-            </p>
-          )}
-          <h3 className="font-serif text-xl tracking-tight italic group-hover:text-[#c94b1f] transition-colors duration-200 mb-1">
-            {tip.title}
-          </h3>
-          {tip.story && (
-            <p className="text-sm text-black/50 leading-relaxed line-clamp-2 mb-3">{tip.story}</p>
-          )}
-          <div className="flex flex-wrap gap-1.5">
-            <span className="text-[0.68rem] bg-[#ede8dc] text-black/60 px-2 py-0.5 rounded">
-              {tip.emoji} {tip.items.length} tips
-            </span>
-            {tip.tripInfo?.budget && (
-              <span className="text-[0.68rem] bg-[#ede8dc] text-black/60 px-2 py-0.5 rounded">
-                {BUDGET_LABEL[tip.tripInfo.budget]}
-              </span>
-            )}
-            {tip.tripInfo?.durationDays && (
-              <span className="text-[0.68rem] bg-[#ede8dc] text-black/60 px-2 py-0.5 rounded">
-                🗓 {tip.tripInfo.durationDays.min}–{tip.tripInfo.durationDays.max} days
-              </span>
-            )}
-          </div>
+          <h3 className="text-sm mb-1 font-medium">{tip.title}</h3>
+          <p className="text-xs text-muted-foreground">
+            {tip.emoji} {tip.items.length} tips
+          </p>
         </div>
       </Link>
     </div>
@@ -205,14 +170,16 @@ type FilterKey = "all" | "budget" | "medium" | "luxury" | string
 
 export default function TravelPage() {
   const [tips, setTips] = useState<TravelTip[]>([])
+  const [allLists, setAllLists] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [activeFilter, setActiveFilter] = useState<FilterKey>("all")
 
-  useEffect(() => {
-    getTravelTips()
-      .then((data: TravelTip[]) => { setTips(data); setLoading(false) })
-      .catch(() => { setError(true); setLoading(false) })
+   useEffect(() => {
+    Promise.all([
+      getTravelTips().then((data: TravelTip[]) => setTips(data)),
+      getLists().then((data) => setAllLists(data))
+    ]).then(() => setLoading(false)).catch(() => { setError(true); setLoading(false) })
   }, [])
 
   const featured = tips.find(t => t.meta?.featured)
@@ -248,19 +215,20 @@ export default function TravelPage() {
   )
 
   return (
-    <div className="min-h-screen text-[#0d0d0d]"
-    style={{ background: "var(--background)" }}>
-      <div className="max-w-5xl mx-auto px-6 pt-28 pb-24">
+    <div className="min-h-screen text-[#0d0d0d]" style={{ background: "var(--background)" }}>
+      <div className="max-w-5xl mx-auto px-6 pt-15 pb-24">
 
         {/* HEADER */}
-        <div className="mb-10">
+        <div className="text-left mb-10">
           <p className="text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
             Reisenotater
           </p>
-          <h1 className="font-serif text-[clamp(3rem,8vw,6rem)] leading-[.9] tracking-[-0.04em] italic mb-4">
-            Travel<br />
-            <em className="text-[#c94b1f]">Tips</em>
-          </h1>
+         <h1
+        className="text-[2rem] sm:text-[3rem] md:text-[4rem] lg:text-[6rem] mb-1"
+        style={{ fontFamily: "'Gasoek One', serif", color: "var(--font-color)"}}
+      >
+      Blog
+      </h1>
           <p className="text-base text-black/50 max-w-md leading-relaxed">
             Steder jeg har vært og ting jeg har lært
           </p>
@@ -269,8 +237,8 @@ export default function TravelPage() {
         {/* FEATURED */}
         {featured && <FeaturedCard tip={featured} />}
 
-        {/* FILTERS — only show if there's more than one region or budget variety */}
-        {(regions.length > 1 || tips.some(t => t.tripInfo?.budget)) && (
+        {/* FILTERS */}
+        {/* {(regions.length > 1 || tips.some(t => t.tripInfo?.budget)) && (
           <div className="flex gap-2 flex-wrap mb-8">
             {filterOptions.map(f => (
               <button
@@ -286,11 +254,15 @@ export default function TravelPage() {
               </button>
             ))}
           </div>
-        )}
+        )} */}
 
-        {/* GRID */}
+        {/* TRAVEL TIPS GRID */}
+        <p className="text-left text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
+            Reiser
+          </p>
         {gridTips.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-12 mb-16">
+            
             {gridTips.map((tip, i) => (
               <TravelCard key={tip._id} tip={tip} index={i} />
             ))}
@@ -301,7 +273,46 @@ export default function TravelPage() {
           </p>
         ) : null}
 
+        {/* CURATED LISTS SECTION */}
+        <p className="text-left text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
+            Tilfeldige innlegg
+          </p>
+        <div className="w-full max-w-5xl">
+        <div className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-4 pb-4">
+
+          {/* {allLists.map((list) => ( */}
+           {allLists.map((list) => (
+            <Link
+              key={list.slug}
+              to={`/${list.slug}`}
+              className="rounded-xl overflow-hidden bg-white p-4 hover:shadow-md transition"
+
+            >
+              <div className="aspect-video rounded-xl overflow-hidden mb-3">
+              <img
+                src={list.image}
+                  className="w-full h-full object-cover hover:scale-105 transition"
+              />
+            </div>
+
+              <h3 className="text-sm mb-1">{list.title}</h3>
+
+              <p className="text-xs text-muted-foreground">
+                {list.items.length} picks
+              </p>
+
+              {/* <span className="inline-block mt-3 text-xl">
+                {list.emoji}
+              </span> */}
+            </Link>
+          ))}
+
+        </div>
+      </div>
       </div>
     </div>
+
+    
+    
   )
 }

@@ -131,7 +131,7 @@ export function ListPage() {
       </motion.div>
 
       {/* Personal story */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -147,7 +147,7 @@ export function ListPage() {
             {list.story}
           </p>
         </div>
-      </motion.div>
+      </motion.div> */}
 
       {/* Controls bar */}
       <motion.div
@@ -430,7 +430,7 @@ export function ListPage() {
 
       {/* LIST VIEW */}
       {viewMode === "list" && (
-        <div className="space-y-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item: any) => {
               const originalIndex = list.items.indexOf(item);
@@ -442,16 +442,17 @@ export function ListPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="group border-t border-border"
+                  className="group rounded-xl border border-border p-4 hover:shadow-md transition"
+                  style={{ backgroundColor: list.color + "08" }}
                 >
-                  <div className="py-6 md:py-8 text-left">
-                    <div className="flex items-start gap-4 md:gap-6">
-                      <span className="text-[0.8rem] text-muted-foreground tabular-nums mt-0.5 w-6 shrink-0">
+                    <div className="text-left">
+                   <div className="flex items-start gap-3">
+                     <span className="text-[0.7rem] text-muted-foreground tabular-nums mt-0.5 w-5 shrink-0">
                         {String(originalIndex + 1).padStart(2, "0")}
                       </span>
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 mb-3">
                         <h3
-                          className="text-[1.05rem] mb-1"
+                          className="text-[0.95rem] mb-2 font-medium"
                           style={{
                             fontFamily: "'DM Serif Display', serif",
                           }}
@@ -460,28 +461,23 @@ export function ListPage() {
                         </h3>
 
                         {/* Address */}
-                        <div className="flex items-center gap-1.5 mb-2 text-[0.78rem] text-muted-foreground">
+                        <div className="flex items-center gap-1.5 mb-3 text-[0.7rem] text-muted-foreground">
                           <MapPin className="w-3 h-3 shrink-0" />
                           <a
                             href={mapsUrl(item.address)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="truncate text-blue-500 hover:underline"
+                            className="truncate text-blue-500 hover:underline max-w-[150px]"
                           >
                             {item.address}
                           </a>
                         </div>
 
-                        <p
-                          className="text-muted-foreground text-[0.9rem] mb-3"
-                          style={{ lineHeight: 1.6 }}
-                        >
-                          {item.description}
-                        </p>
+                      
 
                         {/* Clickable meta badges */}
                         {item.meta && list.tableColumns && (
-                          <div className="flex flex-wrap gap-1.5 mb-3">
+                          <div className="flex flex-wrap gap-1 mb-3">
                             {list.tableColumns.map((col: any) => {
                               const val = item.meta?.[col.key];
                               if (!val) return null;
@@ -491,18 +487,16 @@ export function ListPage() {
                               return (
                                 <button
                                   key={col.key}
-                                  onClick={() =>
-                                    handleFilterClick(col.key, val)
-                                  }
-                                  className={`inline-flex items-center gap-1 text-[0.7rem] px-2 py-1 rounded-md border transition-all cursor-pointer ${
-                                    isActive
-                                      ? "border-foreground/30 text-foreground shadow-sm"
-                                      : "border-border text-muted-foreground hover:border-foreground/20 hover:text-foreground"
+                                  onClick={() => handleFilterClick(col.key, val)}
+                                  className={`inline-flex items-center gap-1 text-[0.65rem] px-1.5 py-0.5 rounded-sm border transition-all cursor-pointer ${
+                                 isActive
+                                    ? "border-foreground/20 text-foreground"
+                                    : "border-border text-muted-foreground hover:text-foreground"
                                   }`}
                                   style={
                                     isActive
                                       ? {
-                                          backgroundColor: list.color + "35",
+                                          backgroundColor: list.color + "25",
                                         }
                                       : {}
                                   }
@@ -515,20 +509,8 @@ export function ListPage() {
                             })}
                           </div>
                         )}
-
-                        {item.detail && (
-                          <p
-                            className="text-[0.8rem] px-3 py-1.5 rounded-full inline-block mb-2"
-                            style={{
-                              backgroundColor: list.color + "30",
-                              color: "inherit",
-                            }}
-                          >
-                            {item.detail}
-                          </p>
-                        )}
                         {item.personalNote && (
-                          <p className="text-[0.8rem] text-muted-foreground italic mt-2 pl-3 border-l-2 border-border">
+                          <p className="text-[0.7rem] text-muted-foreground italic text-wrap line-clamp-2">
                             {item.personalNote}
                           </p>
                         )}
@@ -577,7 +559,7 @@ export function ListPage() {
       </motion.div>
 
       {/* Footer nav */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
@@ -586,12 +568,12 @@ export function ListPage() {
         <p className="text-[0.8rem] text-muted-foreground tracking-widest uppercase mb-4">
           More lists
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2"> */}
          
           {/* {allLists
             .filter((l) => l.slug !== slug)
             .map((l) => ( */}
-            {list.items.map((l: any) => (
+            {/* {list.items.map((l: any) => (
               <Link
                 key={l.name}
                 to={mapsUrl(l.address)}
@@ -602,7 +584,7 @@ export function ListPage() {
               </Link>
             ))}
         </div>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 }

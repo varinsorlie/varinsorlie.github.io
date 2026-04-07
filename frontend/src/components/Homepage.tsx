@@ -83,10 +83,10 @@ export default function Home() {
 
   {/* RECENT POSTS */}
   <section 
-  className="sticky top-0 z-20 py-20 max-w"
+  className="sticky top-0 z-20 py-20 max-w items-center"
         
 >
-  <div className="mx-auto px-6 p-25"
+  <div className="mx-auto px-6 p-25 "
   style={{ 
           background: "var(--background2)",
           backgroundImage: `url(${sunset})`,

@@ -82,7 +82,7 @@ export function Layout() {
           <NavItem to="/">Home</NavItem>
           <NavItem to="/cvPage">Resume</NavItem>
           <NavItem to="/travelPage">Blog</NavItem>
-           <NavItem to="/mapPage">Map</NavItem>
+           {/* <NavItem to="/mapPage">Map</NavItem> */}
         </div>
       )}
 

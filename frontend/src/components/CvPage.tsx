@@ -5,6 +5,7 @@ type Category = "all" | "work" | "edu" | "side" | "award"
 interface CVEntry {
   role: string
   org: string
+  time: string
   desc: string
   cat: Exclude<Category, "all">
   tags?: string[]
@@ -27,6 +28,7 @@ const CV_DATA: CVGroup[] = [
       {
         role: "Software Engineer",
         org: "Pastport, Oslo",
+        time: "Des 2025 - Now",
         desc: "Full-stack developer of PastPort App. Implementing the database connected to the app. Implemented the design in front-end.",
         cat: "work",
         tags: ["Figma", "Ghost", "React", "Typescript"],
@@ -34,6 +36,7 @@ const CV_DATA: CVGroup[] = [
         {
         role: "varinsorlie.github.io — Personal Site",
         org: "Self-initiated",
+        time: "March 2025",
         desc: "Designed and built this very site — part portfolio, part blog, part treasure map.",
         cat: "side",
         tags: ["MongoDB","React", "TypeScript", "CSS", "Tailwind"],
@@ -46,6 +49,7 @@ const CV_DATA: CVGroup[] = [
         {
         role: "MS in Informatics: Programming and System Architecture",
         org: "University of Oslo",
+        time: "Aug 2025 - Now",
         desc: "Started on my masters in system architecture. I will graduate summer 2027",
         cat: "edu",
         tags: ["AI", "Programming", "Energy informatics","Platform technology", ],
@@ -53,6 +57,7 @@ const CV_DATA: CVGroup[] = [
       {
         role: "Software Engineer",
         org: "University of Oslo",
+        time: "June 2025 - Aug 2025",
         desc: "Full-stack developer of an interactive game for students. Created an algorithm to create an adaptive task-collector for the game.",
         cat: "work",
         tags: ["React", "Python", "Django", "Typescript","Figma"],
@@ -60,6 +65,7 @@ const CV_DATA: CVGroup[] = [
     {
         role: "BS in Informatics: design, use and interaction",
         org: "University of Oslo",
+        time: "Aug 2022 - June 2025",
         desc: "",
         cat: "edu",
         tags: ["HCI", "UX design",],
@@ -72,12 +78,14 @@ const CV_DATA: CVGroup[] = [
       {
         role: "Exchange Ambassador",
         org: " University of Oslo",
+        time: "May 2024 - May 2025",
         desc: "Represented UiO in Asia by arranging and speaking at exchange events.",
         cat: "work",
         tags: ["Public speaking", "Branding"],
       },
       {
         role: "Assistant at hostpital",
+        time: "May 2025 - Now",
         org: " Sykehuset Innlandet - Reinsvoll sykehus",
         desc: "Summer substitute at psychiatric hospital for the last two summers. Took care of patients by encouraging them to to activities, and assisted doctors and nurses in their daily tasks at the hospitals.",
         cat: "work",
@@ -90,6 +98,7 @@ const CV_DATA: CVGroup[] = [
       {
         role: "History 1-year-course",
         org: "University of Oslo",
+        time: "Aug 2021 - June 2022",
         desc: "",
         cat: "edu",
         tags: ["History", "Society",],
@@ -143,7 +152,7 @@ function useInView(options?: IntersectionObserverInit) {
 }
 
 // Animated card
-function TimelineCard({ entry, index }: { entry: CVEntry; index: number }) {
+function TimelineCard({ entry, index, isLeft }: { entry: CVEntry; index: number }) {
   const { ref, inView } = useInView({ threshold: 0.15 })
   return (
     <div
@@ -156,20 +165,23 @@ function TimelineCard({ entry, index }: { entry: CVEntry; index: number }) {
       `}
     >
       {/* dot on timeline */}
-      <span className="absolute -left-[22px] top-5 w-2.5 h-2.5 rounded-full border-2 border-black/20 bg-[#f5f0e8] group-hover:bg-[#c94b1f] group-hover:border-[#c94b1f] transition-colors" />
+       <span className={`absolute top-5 w-2.5 h-2.5 rounded-full border-2 border-black/20 bg-[#f5f0e8] group-hover:bg-[#c94b1f] group-hover:border-[#c94b1f] transition-colors ${
+        isLeft ? "-right-[18px]" : "-left-[18px]"
+      }`} />
 
-      <div className="flex items-start justify-between gap-3 mb-1">
-        <p className="font-serif text-[1.1rem] leading-snug tracking-tight">{entry.role}</p>
+      <div className={`flex items-start justify-between gap-3 mb-1 ${isLeft ? "flex-row-reverse" : ""}`}>
+        <p className={`font-serif text-[1.1rem] leading-snug tracking-tight ${isLeft ? "text-right" : "text-left"}`}>{entry.role}</p>
         <span className={`text-[0.62rem] tracking-widest uppercase px-2.5 py-1 rounded-full shrink-0 font-medium ${BADGE[entry.cat]}`}>
           {BADGE_LABEL[entry.cat]}
         </span>
       </div>
 
-      <p className="text-sm italic text-black/50 mb-2">{entry.org}</p>
-      <p className="text-sm leading-relaxed text-black/60 max-w-lg">{entry.desc}</p>
+      <p className={`text-sm italic text-black/50 mb-2 ${isLeft ? "text-right" : "text-left"}`}>{entry.org}</p>
+      <p className={`text-sm italic text-black/50 mb-2 ${isLeft ? "text-right" : "text-left"}`}>{entry.time}</p>
+
 
       {entry.tags && (
-        <div className="flex flex-wrap gap-1.5 mt-3">
+        <div className={`flex flex-wrap gap-1.5 mt-3 ${isLeft ? "justify-end" : "justify-start"}`}>
           {entry.tags.map(t => (
             <span key={t} className="text-[0.68rem] bg-[#ede8dc] text-black/70 px-2 py-0.5 rounded">{t}</span>
           ))}
@@ -255,7 +267,7 @@ export default function CVPage() {
             transform: lineIn ? "scaleY(1)" : "scaleY(0)",
             transition: "transform 1.2s cubic-bezier(.16,1,.3,1)",
           }}
-          className="hidden sm:block absolute left-[calc(1.5rem+115px)] top-0 bottom-0 w-px bg-black/10"
+          className="hidden sm:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-black/10"
         />
 
         {visibleGroups.map(group => {
@@ -272,11 +284,26 @@ export default function CVPage() {
                <span className="sm:hidden block font-serif italic text-sm text-black/40 mb-3">
                {group.year}
               </span>
-              {/* cards */}
-              <div className="sm:ml-[130px] flex flex-col gap-3">
-                {entries.map((entry, i) => (
-                  <TimelineCard key={`${group.year}-${i}`} entry={entry} index={i} />
-                ))}
+
+              
+              <div className="sm:flex sm:flex-col">
+                {entries.map((entry, i) => {
+                  const isLeft = i % 2 === 0; // alternate left/right
+                  return (
+                    <div
+                      key={`${group.year}-${i}`}
+                      className={`relative mb-3 sm:flex sm:gap-6 ${isLeft ? "sm:flex-row-reverse" : ""}`}
+                    >
+                      {/* spacer for centering */}
+                      <div className="hidden sm:block sm:w-[50%]" />
+
+                      {/* card */}
+                      <div className="sm:w-[50%]">
+                        <TimelineCard entry={entry} index={i} isLeft={isLeft} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )
@@ -284,14 +311,14 @@ export default function CVPage() {
       </div>
 
       {/* SKILLS */}
-      <div className="max-w-3xl mx-auto px-6 sm:px-6 pb-24">
+      {/* <div className="max-w-3xl mx-auto px-6 sm:px-6 pb-24">
         <p className="text-[0.68rem] tracking-[.22em] uppercase text-black/35 mb-4 pt-6 border-t border-black/10">
           Skills & tools
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {SKILLS.map((s, i) => <SkillBar key={s.name} skill={s} index={i} />)}
         </div>
-      </div>
+      </div> */}
 
     </div>
   )

@@ -4,8 +4,8 @@
   --font-size: 16px;
   --background: #ffffff;
   --background2: #f5f0e8;
-  /* --font-color:#009b0d; */
-  --font-color: #D14726;
+  --font-color:#000000;
+  /* --font-color: #D14726; */
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
   --card-foreground: oklch(0.145 0 0);

@@ -96,28 +96,28 @@ export function ListPage() {
         initial={{ opacity: 0, scale: 1.02 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7 }}
-        className="relative rounded-2xl overflow-hidden mb-10 aspect-[2/1]"
+        className="flex gap-3 mb-8 overflow-x-auto pb-2"
       >
-        <ImageWithFallback
-          src={list.image}
-          alt={list.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-0 left-0 p-6">
-          <span className="text-[2.5rem]">{list.emoji}</span>
-        </div>
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="flex-shrink-0 w-full md:w-1/3 aspect-[4/3] overflow-hidden bg-muted ">
+            <ImageWithFallback
+              src={list.image}
+              alt={`${list.title} ${i + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
       </motion.div>
 
-      {/* Header */}
+     {/* TITLE & LOCATION */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="mb-6"
+        className="mb-8"
       >
         <h1
-          className="text-[2rem] md:text-[2.5rem] tracking-tight mb-3"
+          className="text-[2.5rem] md:text-[3rem] tracking-tight mb-1 font-normal"
           style={{
             fontFamily: "'DM Serif Display', serif",
             lineHeight: 1.15,
@@ -125,107 +125,137 @@ export function ListPage() {
         >
           {list.title}
         </h1>
-        <p className="text-muted-foreground" style={{ lineHeight: 1.6 }}>
-          {list.subtitle}
-        </p>
+        <p className="text-muted-foreground text-lg">Oslo, Norway</p>
       </motion.div>
 
-      {/* Personal story */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="mb-10 p-5 rounded-xl border border-dashed border-border"
-        style={{ backgroundColor: list.color + "10" }}
-      >
-        <div className="flex items-start gap-3">
-          <MessageCircle className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-          <p
-            className="text-[0.9rem] text-muted-foreground italic"
-            style={{ lineHeight: 1.7 }}
-          >
-            {list.story}
-          </p>
-        </div>
-      </motion.div> */}
-
-      {/* Controls bar */}
+ 
+         {/* FILTER */}
+          {/* FILTER */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.25, duration: 0.4 }}
-        className="flex items-center justify-between mb-4"
+        transition={{ delay: 0.2, duration: 0.4 }}
+        className="flex flex-wrap gap-3 mb-8"
       >
-        <p className="text-[0.8rem] text-muted-foreground">
-          {activeFilter ? (
-            <span>
-              Showing {filteredItems.length} of {list.items.length}
-            </span>
-          ) : (
-            <span>{list.items.length} places</span>
-          )}
-        </p>
-        {hasTable && (
-          <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50">
-            <button
-              onClick={() => setViewMode("list")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[0.75rem] transition-all ${
-                viewMode === "list"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <List className="w-3.5 h-3.5" />
-              List
-            </button>
-            <button
-              onClick={() => setViewMode("table")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[0.75rem] transition-all ${
-                viewMode === "table"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Table className="w-3.5 h-3.5" />
-              Compare
-            </button>
-          </div>
-        )}
-      </motion.div>
+        <button
+          onClick={() => setActiveFilter(null)}
+          className={`px-6 py-2 rounded-full border-2 transition-all text-sm ${
+            activeFilter === null
+              ? "border-foreground bg-foreground text-background"
+              : "border-black/15 text-foreground hover:border-foreground/30"
+          }`}
+        >
+          All
+        </button>
 
-      {/* Active filter chip */}
-      <AnimatePresence>
-        {activeFilter && (
-          <motion.div
-            initial={{ opacity: 0, y: -6, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: "auto" }}
-            exit={{ opacity: 0, y: -6, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mb-4 overflow-hidden"
+        {/* Sentrum */}
+        <button
+          onClick={() => handleFilterClick("area", "Sentrum")}
+          className={`px-6 py-2 rounded-full border-2 transition-all text-sm inline-flex items-center gap-2 ${
+            activeFilter?.key === "area" && activeFilter?.value === "Sentrum"
+              ? "border-foreground bg-foreground text-background"
+              : "border-black/15 text-foreground hover:border-foreground/30"
+          }`}
+        >
+          Sentrum
+        </button>
+
+        {/* Grünerløkka */}
+        <button
+          onClick={() => handleFilterClick("area", "Grünerløkka")}
+          className={`px-6 py-2 rounded-full border-2 transition-all text-sm inline-flex items-center gap-2 ${
+            activeFilter?.key === "area" && activeFilter?.value === "Grünerløkka"
+              ? "border-foreground bg-foreground text-background"
+              : "border-black/15 text-foreground hover:border-foreground/30"
+          }`}
+        >
+          Grünerløkka
+        </button>
+
+        {/* Billigst (Cheapest) */}
+        <button
+          onClick={() => handleFilterClick("studentDeal", "Ja")}
+          className={`px-6 py-2 rounded-full border-2 transition-all text-sm inline-flex items-center gap-2 ${
+            activeFilter?.key === "studentDeal" && activeFilter?.value === "Ja"
+              ? "border-foreground bg-foreground text-background"
+              : "border-black/15 text-foreground hover:border-foreground/30"
+          }`}
+        >
+          Studentrabatt
+        </button>
+      </motion.div>
+      {/* GRID VIEW */}
+      {viewMode === "list" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          <AnimatePresence mode="popLayout">
+            {filteredItems.map((item: any) => {
+              const originalIndex = list.items.indexOf(item);
+              return (
+                <motion.div
+                  key={item.name}
+                  layout
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="rounded-3xl border-2 border-black/10 p-5 hover:shadow-lg transition"
+                  style={{ backgroundColor: list.color + "08" }}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3
+                        className="text-base text-left font-medium mb-1"
+                        style={{
+                          fontFamily: "'DM Serif Display', serif",
+                        }}
+                      >
+                        {originalIndex + 1}. {item.name}
+                      </h3>
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <MapPin className="w-4 h-4" />
+                        <a
+                          href={mapsUrl(item.address)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          {item.address}
+                        </a>
+                      </div>
+                    </div>
+                    {item.meta?.price && (
+                      <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {item.meta.price}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  {item.personalNote && (
+                    <p className="text-sm text-foreground text-left leading-relaxed">
+                      {item.personalNote}
+                    </p>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {filteredItems.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-[0.9rem]">
+            No matches for this filter.
+          </p>
+          <button
+            onClick={() => setActiveFilter(null)}
+            className="mt-2 text-[0.8rem] underline text-muted-foreground hover:text-foreground"
           >
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[0.75rem] text-muted-foreground">
-                Filtered by:
-              </span>
-              <button
-                onClick={() => setActiveFilter(null)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.75rem] border transition-all hover:border-foreground/30"
-                style={{
-                  backgroundColor: list.color + "25",
-                  borderColor: list.color + "60",
-                }}
-              >
-                <span>
-                  {getColumnEmoji(activeFilter.key)}{" "}
-                  {getColumnLabel(activeFilter.key)}:
-                </span>
-                <span className="font-medium">{activeFilter.value}</span>
-                <X className="w-3 h-3 ml-0.5" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            Clear filter
+          </button>
+        </div>
+      )}
 
       {/* TABLE VIEW */}
       {hasTable && viewMode === "table" && (
@@ -428,9 +458,9 @@ export function ListPage() {
         </motion.div>
       )}
 
-      {/* LIST VIEW */}
-      {viewMode === "list" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* LIST VIEW */}
+      {/* {viewMode === "list" && (
+        <div className="space-y-4">
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item: any) => {
               const originalIndex = list.items.indexOf(item);
@@ -442,79 +472,94 @@ export function ListPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="group rounded-xl border border-border p-4 hover:shadow-md transition"
+                  className="group rounded-xl border border-border overflow-hidden hover:shadow-md transition"
                   style={{ backgroundColor: list.color + "08" }}
                 >
-                    <div className="text-left">
-                   <div className="flex items-start gap-3">
-                     <span className="text-[0.7rem] text-muted-foreground tabular-nums mt-0.5 w-5 shrink-0">
-                        {String(originalIndex + 1).padStart(2, "0")}
-                      </span>
-                      <div className="flex-1 min-w-0 mb-3">
-                        <h3
-                          className="text-[0.95rem] mb-2 font-medium"
-                          style={{
-                            fontFamily: "'DM Serif Display', serif",
-                          }}
-                        >
-                          {item.name}
-                        </h3>
+                  <div className="flex flex-col md:flex-row gap-4 p-4"> */}
 
-                        {/* Address */}
-                        <div className="flex items-center gap-1.5 mb-3 text-[0.7rem] text-muted-foreground">
-                          <MapPin className="w-3 h-3 shrink-0" />
-                          <a
-                            href={mapsUrl(item.address)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="truncate text-blue-500 hover:underline max-w-[150px]"
-                          >
-                            {item.address}
-                          </a>
+                    {/* Content right */}
+                    {/* <div className="flex-1">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[0.7rem] text-muted-foreground tabular-nums">
+                              {String(originalIndex + 1).padStart(2, "0")}.
+                            </span>
+                            <h3
+                              className="text-lg md:text-xl font-medium"
+                              style={{
+                                fontFamily: "'DM Serif Display', serif",
+                              }}
+                            >
+                              {item.name}
+                            </h3>
+                          </div> */}
+
+                          {/* Rating placeholder */}
+                          {/* <div className="flex items-center gap-2 mb-2">
+                            <span className="text-sm text-green-600">●●●●○</span>
+                          </div>
                         </div>
+                        <button className="text-2xl">♡</button>
+                      </div> */}
 
-                      
+                      {/* Address */}
+                      {/* <div className="flex items-center gap-1.5 mb-3 text-[0.85rem] text-muted-foreground">
+                        <MapPin className="w-4 h-4 shrink-0" />
+                        <a
+                          href={mapsUrl(item.address)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          {item.address}
+                        </a>
+                      </div> */}
 
-                        {/* Clickable meta badges */}
-                        {item.meta && list.tableColumns && (
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            {list.tableColumns.map((col: any) => {
-                              const val = item.meta?.[col.key];
-                              if (!val) return null;
-                              const isActive =
-                                activeFilter?.key === col.key &&
-                                activeFilter?.value === val;
-                              return (
-                                <button
-                                  key={col.key}
-                                  onClick={() => handleFilterClick(col.key, val)}
-                                  className={`inline-flex items-center gap-1 text-[0.65rem] px-1.5 py-0.5 rounded-sm border transition-all cursor-pointer ${
-                                 isActive
+                      {/* Meta badges */}
+                      {/* {item.meta && list.tableColumns && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {list.tableColumns.map((col: any) => {
+                            const val = item.meta?.[col.key];
+                            if (!val) return null;
+                            const isActive =
+                              activeFilter?.key === col.key &&
+                              activeFilter?.value === val;
+                            return (
+                              <button
+                                key={col.key}
+                                onClick={() => handleFilterClick(col.key, val)}
+                                className={`inline-flex items-center gap-1 text-[0.75rem] px-2 py-1 rounded-md border transition-all cursor-pointer ${
+                                  isActive
                                     ? "border-foreground/20 text-foreground"
                                     : "border-border text-muted-foreground hover:text-foreground"
-                                  }`}
-                                  style={
-                                    isActive
-                                      ? {
-                                          backgroundColor: list.color + "25",
-                                        }
-                                      : {}
-                                  }
-                                  title={`Filter by ${getColumnLabel(col.key)}: ${val}`}
-                                >
-                                  <span>{col.emoji}</span>
-                                  {val}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        )}
-                        {item.personalNote && (
-                          <p className="text-[0.7rem] text-muted-foreground italic text-wrap line-clamp-2">
-                            {item.personalNote}
-                          </p>
-                        )}
-                      </div>
+                                }`}
+                                style={
+                                  isActive
+                                    ? {
+                                        backgroundColor: list.color + "25",
+                                      }
+                                    : {}
+                                }
+                                title={`Filter by ${getColumnLabel(col.key)}: ${val}`}
+                              >
+                                <span>{col.emoji}</span>
+                                {val}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )} */}
+
+                      {/* Reviews/notes */}
+                      {/* {item.personalNote && (
+                        <div className="space-y-2">
+                          <p className="text-[0.85rem] italic font-medium">"{item.personalNote}"</p>
+                          {item.review && (
+                            <p className="text-[0.8rem] text-muted-foreground">{item.review}</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -523,7 +568,7 @@ export function ListPage() {
           </AnimatePresence>
 
           {filteredItems.length === 0 && (
-            <div className="text-center py-12 border-t border-border">
+            <div className="text-center py-12">
               <p className="text-muted-foreground text-[0.9rem]">
                 No matches for this filter.
               </p>
@@ -535,12 +580,8 @@ export function ListPage() {
               </button>
             </div>
           )}
-
-          {filteredItems.length > 0 && (
-            <div className="border-t border-border" />
-          )}
         </div>
-      )}
+      )} */}
 
       {/* Closing note */}
       <motion.div

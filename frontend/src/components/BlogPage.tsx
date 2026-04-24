@@ -54,7 +54,7 @@ export default function Blog() {
                       <ArrowUpRight className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                     </div>
                     <span className="text-[0.75rem] text-muted-foreground">
-                      {list.items.length} picks
+                      {list.items.length} valgte
                     </span>
                   </div>
                 </Link>

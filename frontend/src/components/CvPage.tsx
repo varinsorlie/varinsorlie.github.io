@@ -220,9 +220,9 @@ export default function CVPage() {
   )
 
   return (
-    <div className="min-h-screen text-[#0d0d0d] px-6 pt-15"
+    <div className="min-h-screen text-[#0d0d0d]"
     style={{ background: "var(--background)" }}>
-
+      <div className="max-w-5xl mx-auto px-6 pt-15 pb-24">
       {/* HEADER */}
         <div className="text-left mb-10">
           <p className="text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
@@ -230,11 +230,11 @@ export default function CVPage() {
           </p>
          <h1
         className="text-[2rem] sm:text-[3rem] md:text-[4rem] lg:text-[6rem] mb-1"
-        style={{ fontFamily: "'Gasoek One', serif", color: "var(--font-color)"}}
+        style={{ color: "var(--font-color)"}}
       >
       Resume
       </h1>
-          <p className="text-base text-black/50 max-w-md leading-relaxed">
+          <p className="text-muted-foreground italic text-base pb-6" style={{ color: "var(--font-color)" }}>
             Selected experience in terms of education, work and projects. 
           </p>
         </div>
@@ -319,7 +319,7 @@ export default function CVPage() {
           {SKILLS.map((s, i) => <SkillBar key={s.name} skill={s} index={i} />)}
         </div>
       </div> */}
-
+</div>
     </div>
   )
 }

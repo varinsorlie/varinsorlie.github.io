@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { getTravelTips } from "../data/api.js"
 import { getLists } from "../data/api.js"
-import { allLists as staticLists } from "./list-data.js"
 import { ArrowUpRight } from "lucide-react"
 import { motion } from "motion/react"
+
 // ── Types ──────────────────────────────────────────────────────
 interface Destination {
   city: string
@@ -29,6 +29,34 @@ interface TipItem {
   note?: string
 }
 
+// ── New overview types ─────────────────────────────────────────
+interface AppItem {
+  id: string
+  name: string
+  description: string
+  platform: string[]
+  free: boolean
+}
+
+interface PlaceItem {
+  id: string
+  name: string
+  area: string
+  tip: string
+  priceRange: string
+  mustVisit: boolean
+  cuisine?: string  // restaurants only
+  type?: string     // shopping + activities only
+}
+
+interface Overview {
+  apps?: AppItem[]
+  cafes?: PlaceItem[]
+  restaurants?: PlaceItem[]
+  shopping?: PlaceItem[]
+  activities?: PlaceItem[]
+}
+
 interface TravelTip {
   _id: string
   slug: string
@@ -43,6 +71,7 @@ interface TravelTip {
   tripInfo?: TripInfo
   items: TipItem[]
   categories?: string[]
+  overview?: Overview
   meta?: {
     featured?: boolean
     tags?: string[]
@@ -55,14 +84,6 @@ const BUDGET_LABEL: Record<string, string> = {
   budget: "💸 Budget",
   medium: "💳 Mid-range",
   luxury: "💎 Luxury",
-}
-
-const REGION_COLORS: Record<string, string> = {
-  Europe: "#c94b1f",
-  Asia: "#4a6741",
-  Americas: "#1a5276",
-  Africa: "#7a3a10",
-  Oceania: "#3a5c6b",
 }
 
 function useInView(threshold = 0.12) {
@@ -94,12 +115,9 @@ function FeaturedCard({ tip }: { tip: TravelTip }) {
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-
-        {/* Featured badge */}
         <div className="absolute top-5 right-5 bg-white/90 text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full font-medium text-black">
           Featured
         </div>
-
         <div className="absolute bottom-0 left-0 p-7 sm:p-10 text-white">
           {tip.destination && (
             <p className="text-[0.7rem] tracking-[.2em] uppercase opacity-60 mb-2">
@@ -137,30 +155,62 @@ function FeaturedCard({ tip }: { tip: TravelTip }) {
 function TravelCard({ tip, index }: { tip: TravelTip; index: number }) {
   const { ref, inView } = useInView()
 
+  // Count total overview items across all sections
+  const overviewCount = tip.overview
+    ? Object.values(tip.overview).reduce((sum, arr) => sum + (arr?.length ?? 0), 0)
+    : 0
+
   return (
-    <div
-      ref={ref}
-      style={{ transitionDelay: `${index * 75}ms` }}
-      className={`transition-all duration-700 ease-out ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-    >
-      <Link to={`/travel/${tip.slug}`} className="group rounded-xl overflow-hidden bg-white p-4 hover:shadow-md transition">
-        {/* Image */}
-        <div className="aspect-video rounded-xl overflow-hidden mb-3">
+    <div className="w-full max-w-5xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 pb-4">
+      
+      
+      <Link to={`/travel/${tip.slug}`} className="group overflow-hidden bg-white p-4">
+        <div className="aspect-video overflow-hidden mb-3">
           <img
             src={tip.image}
             alt={tip.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover hover:scale-105 transition"
           />
         </div>
-
-        {/* Body */}
         <div>
-          <h3 className="text-sm mb-1 font-medium">{tip.title}</h3>
+          <h3 className="text-sm mb-1 text-left pl-2">{tip.title}</h3>
           <p className="text-xs text-muted-foreground">
-            {tip.emoji} {tip.items.length} tips
           </p>
         </div>
       </Link>
+    </div>
+    </div>
+  )
+}
+
+// ── Overview section (shown on the index page as a preview) ────
+const OVERVIEW_SECTIONS: {
+  key: keyof Overview
+  label: string
+  emoji: string
+}[] = [
+  { key: "apps",        label: "Apps",        emoji: "📱" },
+  { key: "cafes",       label: "Cafés",       emoji: "☕" },
+  { key: "restaurants", label: "Restaurants", emoji: "🍽" },
+  { key: "shopping",    label: "Shopping",    emoji: "🛍" },
+  { key: "activities",  label: "Activities",  emoji: "🗺" },
+]
+
+function OverviewPreview({ tip }: { tip: TravelTip }) {
+  if (!tip.overview) return null
+  const sections = OVERVIEW_SECTIONS.filter(s => (tip.overview![s.key]?.length ?? 0) > 0)
+  if (sections.length === 0) return null
+
+  return (
+    <div className="mt-4 pt-4 border-t border-black/5">
+      <div className="flex gap-3 flex-wrap">
+        {sections.map(s => (
+          <span key={s.key} className="text-[0.68rem] text-black/40 flex items-center gap-1">
+            {s.emoji} {tip.overview![s.key]!.length} {s.label.toLowerCase()}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }
@@ -175,7 +225,7 @@ export default function TravelPage() {
   const [error, setError] = useState(false)
   const [activeFilter, setActiveFilter] = useState<FilterKey>("all")
 
-   useEffect(() => {
+  useEffect(() => {
     Promise.all([
       getTravelTips().then((data: TravelTip[]) => setTips(data)),
       getLists().then((data) => setAllLists(data))
@@ -192,7 +242,8 @@ export default function TravelPage() {
     return t.destination?.region === activeFilter
   })
 
-  const gridTips = filtered.filter(t => t._id !== featured?._id)
+  // const gridTips = filtered.filter(t => t._id !== featured?._id)
+  const gridTips = filtered.filter(t => t._id)
 
   const filterOptions: { key: FilterKey; label: string }[] = [
     { key: "all", label: "All" },
@@ -203,19 +254,19 @@ export default function TravelPage() {
   ]
 
   if (loading) return (
-    <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <p className="font-serif italic text-black/30 text-lg animate-pulse">Loading trips…</p>
     </div>
   )
 
   if (error) return (
-    <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <p className="font-serif italic text-black/30 text-lg">Could not load travel tips.</p>
     </div>
   )
 
   return (
-    <div className="min-h-screen text-[#0d0d0d]" style={{ background: "var(--background)" }}>
+    <div className="min-h-screen text-[#0d0d0d]" >
       <div className="max-w-5xl mx-auto px-6 pt-15 pb-24">
 
         {/* HEADER */}
@@ -223,46 +274,27 @@ export default function TravelPage() {
           <p className="text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
             Reisenotater
           </p>
-         <h1
-        className="text-[2rem] sm:text-[3rem] md:text-[4rem] lg:text-[6rem] mb-1"
-        style={{ fontFamily: "'Gasoek One', serif", color: "var(--font-color)"}}
-      >
-      Blog
-      </h1>
-          <p className="text-base text-black/50 max-w-md leading-relaxed">
+          <h1
+            className="text-[2rem] sm:text-[3rem] md:text-[4rem] lg:text-[6rem] mb-1"
+            style={{color: "var(--font-color)" }}
+          >
+            Blog
+          </h1>
+          <p className="text-muted-foreground italic text-base pb-6" 
+          style={{ color: "var(--font-color)" }}>
             Steder jeg har vært og ting jeg har lært
           </p>
         </div>
 
         {/* FEATURED */}
-        {featured && <FeaturedCard tip={featured} />}
-
-        {/* FILTERS */}
-        {/* {(regions.length > 1 || tips.some(t => t.tripInfo?.budget)) && (
-          <div className="flex gap-2 flex-wrap mb-8">
-            {filterOptions.map(f => (
-              <button
-                key={f.key}
-                onClick={() => setActiveFilter(f.key)}
-                className={`text-[0.72rem] tracking-[.1em] uppercase border rounded-full px-4 py-1.5 transition-all duration-200 cursor-pointer
-                  ${activeFilter === f.key
-                    ? "bg-[#0d0d0d] text-[#f5f0e8] border-[#0d0d0d]"
-                    : "border-black/15 text-black/50 hover:border-black/40 hover:text-black"
-                  }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-        )} */}
+        {/* {featured && <FeaturedCard tip={featured} />} */}
 
         {/* TRAVEL TIPS GRID */}
         <p className="text-left text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
-            Reiser
-          </p>
+          Reiser
+        </p>
         {gridTips.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-12 mb-16">
-            
+          <div className="grid grid-cols-1 sm:grid-cols-1 gap-x-6 gap-y-12 ">
             {gridTips.map((tip, i) => (
               <TravelCard key={tip._id} tip={tip} index={i} />
             ))}
@@ -275,44 +307,33 @@ export default function TravelPage() {
 
         {/* CURATED LISTS SECTION */}
         <p className="text-left text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
-            Tilfeldige innlegg
-          </p>
+          Tilfeldige innlegg
+        </p>
         <div className="w-full max-w-5xl">
-        <div className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-4 pb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-4 pb-4">
+            {allLists.map((list) => (
+              <Link
+                key={list.slug}
+                to={`/${list.slug}`}
+                className="overflow-hidden bg-white p-4"
+              >
+                <div className="aspect-video overflow-hidden mb-3">
+                  <img
+                    src={list.image}
+                    className="w-full h-full object-cover hover:scale-105 transition"
+                  />
+                </div>
+                <h3 className="text-sm text-left mb-1 pl-2">{list.title}</h3>
+                <p className="text-xs text-left text-muted-foreground pl-2">
+                  {list.items.length} valgte
 
-          {/* {allLists.map((list) => ( */}
-           {allLists.map((list) => (
-            <Link
-              key={list.slug}
-              to={`/${list.slug}`}
-              className="rounded-xl overflow-hidden bg-white p-4 hover:shadow-md transition"
-
-            >
-              <div className="aspect-video rounded-xl overflow-hidden mb-3">
-              <img
-                src={list.image}
-                  className="w-full h-full object-cover hover:scale-105 transition"
-              />
-            </div>
-
-              <h3 className="text-sm mb-1">{list.title}</h3>
-
-              <p className="text-xs text-muted-foreground">
-                {list.items.length} picks
-              </p>
-
-              {/* <span className="inline-block mt-3 text-xl">
-                {list.emoji}
-              </span> */}
-            </Link>
-          ))}
-
+                </p>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+
       </div>
     </div>
-
-    
-    
   )
 }

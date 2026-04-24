@@ -57,6 +57,7 @@ export function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const isMapPage = location.pathname === "/mapPage";
+  const isBirthday = location.pathname === "/birthdayPage";
   const [locale, setLocale] = useState<Locale>(() => {
   const stored = typeof window !== "undefined" && localStorage.getItem("locale");
     return (stored as Locale) || "en";
@@ -77,17 +78,18 @@ export function Layout() {
       <div className="relative flex flex-col items-center mb-5 pt-5">
 
         {/* Navigation row (hide on MapPage*/}
-      {!isMapPage && (
+      {!isBirthday && (
         <div className="fixed bg-transparent flex gap-2 whitespace-nowrap z-50">
           <NavItem to="/">Home</NavItem>
           <NavItem to="/cvPage">Resume</NavItem>
           <NavItem to="/travelPage">Blog</NavItem>
+          {/* <NavItem to="/birthdayPage">Bursdag!</NavItem> */}
            {/* <NavItem to="/mapPage">Map</NavItem> */}
         </div>
       )}
 
       {/* BACK BUTTON — only on MapPage */}
-     {isMapPage && (
+     {isBirthday && (
        <div className="fixed top-4 left-4 z-50">
          <Link
            to="/"
@@ -98,6 +100,9 @@ export function Layout() {
          </Link>
        </div>
      )}
+
+
+    
         {/* Language button */}
         {/* <div className=" sm:right-5 sm:top-2.5 pt-5 fixed bg-transparent flex gap-2 whitespace-nowrap z-50">
           <div className="nav-pill">

@@ -7,6 +7,11 @@ import myImage2 from "../assets/IMG_5274.jpeg"
 import myImage3 from "../assets/IMG_4934.jpeg"
 import myImage4 from "../assets/IMG_4651.jpeg"
 
+import grid1 from "../assets/IMG_5010.jpeg"
+import grid2 from "../assets/shanghai.jpg"
+import grid3 from "../assets/beach.jpg"
+import grid4 from "../assets/sno.jpeg"
+
 import { useLanguage } from "./Layout.js";
 import { BouncyAvatar } from "./BouncyAvatar.js";
 
@@ -53,32 +58,78 @@ export default function Home() {
   return (
 <div className="min-h-screen">
 
-  {/* INTRO */}
-  <section 
-  className="sticky top-0 z-10 py-20"
-  style={{ background: "var(--background)" }}
->
-  {/* IMAGES */}
-  {/* <div className="grid grid-cols-2 gap-4 place-items-center
-                      sm:flex sm:justify-center sm:gap-6 mb-16">
-        {PROFILE_IMAGE.map((src, i) => (
-          <BouncyAvatar key={i} src={src} />
-        ))}
-      </div> */}
-  <div className="mx-auto px-6 pt-20 text-left ">
-      {/* your intro content */}
-      <h1
-        className="text-[2rem] sm:text-[3rem] md:text-[4rem] lg:text-[6rem] mb-1"
-        style={{ fontFamily: "'Gasoek One', serif", color: "var(--font-color)"}}
-      >
-      Vårin Sørlie
-      </h1>
 
-      <p className="text-muted-foreground italic mb-10"
-          style={{color: "var(--font-color)"}}>
-          {t("intro")}
-      </p>
+    {/* INTRO */}
+  <section 
+    className="py-20"
+    style={{ background: "var(--background)" }}
+  >
+      {/* Birthday Button */}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.2, duration: 0.6 }}
+      className="mb-20"
+    >
+      <Link
+        to="/birthdayPage"
+
+        className="w-1/2 p-5 bg-gradient-to-r from-pink-500 
+        via-purple-500 to-pink-500 text-white font-bold text-xl 
+        sm:text-2xl py-6 sm:py-8 rounded-2xl hover:shadow-2xl 
+        hover:scale-105 transition-all duration-300 text-center animate-pulse"
+      >
+        🎉 Bursdags-bingo! 🎉
+      </Link>
+    </motion.div>
+    <div className="max-w-6xl mx-auto px-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        
+        {/* LEFT: Title */}
+        <div>
+          <h1
+            className="text-[2rem] sm:text-[3rem] md:text-[4rem] lg:text-[4rem] mb-8 leading-tight"
+            style={{  color: "var(--font-color)" }}
+          >
+            Vårin Sørlie
+          </h1>
+          
+          <p className="text-muted-foreground italic text-base pb-6"
+            style={{ color: "var(--font-color)" }}>
+            {t("intro")}
+          </p>
+
+        {/* Image 2 */}
+          <div className="break-inside-avoid">
+            <img src={grid2} alt="Placeholder 2" className="w-full h-auto object-cover" />
+            <p className="text-sm text-muted-foreground mt-2">Shanghai, China</p>
+          </div>
+        </div>
+
+        {/* RIGHT: Image grid */}
+        <div className="columns-2 gap-4 space-y-4">
+          {/* Image 1 */}
+          <div className="break-inside-avoid">
+            <img src={grid1} alt="Placeholder 1" className="w-full h-auto object-cover" />
+            <p className="text-sm text-muted-foreground mt-2">Jomfruslettfjell, Norway</p>
+          </div>
+
+          {/* Image 3 */}
+          <div className="break-inside-avoid">
+            <img src={grid3} alt="Placeholder 3" className="w-full h-auto object-cover" />
+            <p className="text-sm text-muted-foreground mt-2">Ko Lanta, Thailand</p>
+          </div>
+
+          {/* Image 4 */}
+          <div className="break-inside-avoid">
+            <img src={grid4} alt="Placeholder 4" className="w-full h-auto object-cover" />
+            <p className="text-sm text-muted-foreground mt-2">Gjøvik, Norway</p>
+          </div>
+        </div>
+        
+      </div>
     </div>
+    
   </section>
 
   {/* RECENT POSTS */}
@@ -128,7 +179,7 @@ export default function Home() {
               <h3 className="text-sm mb-1">{list.title}</h3>
 
               <p className="text-xs text-muted-foreground">
-                {list.items.length} picks
+                {list.items.length} valgte
               </p>
 
               {/* <span className="inline-block mt-3 text-xl">

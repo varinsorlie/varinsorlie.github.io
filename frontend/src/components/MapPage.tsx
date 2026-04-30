@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+
 import { motion } from "motion/react";
 import map from "../assets/My_map.png";
 import thailand from "../assets/thailand.png"; // add this import

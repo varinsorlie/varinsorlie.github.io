@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { getTravelTips } from "../data/api.js"
 import { getLists } from "../data/api.js"
-import { ArrowUpRight } from "lucide-react"
-import { motion } from "motion/react"
 
 // ── Types ──────────────────────────────────────────────────────
 interface Destination {
@@ -79,92 +77,11 @@ interface TravelTip {
   }
 }
 
-// ── Helpers ────────────────────────────────────────────────────
-const BUDGET_LABEL: Record<string, string> = {
-  budget: "💸 Budget",
-  medium: "💳 Mid-range",
-  luxury: "💎 Luxury",
-}
-
-function useInView(threshold = 0.12) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [inView, setInView] = useState(false)
-  useEffect(() => {
-    if (!ref.current) return
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setInView(true); obs.disconnect() }
-    }, { threshold })
-    obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [])
-  return { ref, inView }
-}
-
-// ── Featured hero card ─────────────────────────────────────────
-function FeaturedCard({ tip }: { tip: TravelTip }) {
-  const { ref, inView } = useInView()
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out mb-10 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-    >
-      <Link to={`/travel/${tip.slug}`} className="group block rounded-3xl overflow-hidden relative aspect-[16/7]">
-        <img
-          src={tip.image}
-          alt={tip.title}
-          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-        <div className="absolute top-5 right-5 bg-white/90 text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full font-medium text-black">
-          Featured
-        </div>
-        <div className="absolute bottom-0 left-0 p-7 sm:p-10 text-white">
-          {tip.destination && (
-            <p className="text-[0.7rem] tracking-[.2em] uppercase opacity-60 mb-2">
-              {tip.destination.city}, {tip.destination.country}
-            </p>
-          )}
-          <h2 className="font-serif text-3xl sm:text-4xl tracking-tight italic mb-2">
-            {tip.title}
-          </h2>
-          {tip.story && (
-            <p className="text-sm opacity-60 max-w-md line-clamp-2 mb-4">{tip.story}</p>
-          )}
-          <div className="flex gap-2 flex-wrap">
-            <span className="text-[0.68rem] bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-              {tip.emoji} {tip.items.length} tips
-            </span>
-            {tip.tripInfo?.budget && (
-              <span className="text-[0.68rem] bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                {BUDGET_LABEL[tip.tripInfo.budget]}
-              </span>
-            )}
-            {tip.tripInfo?.durationDays && (
-              <span className="text-[0.68rem] bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                🗓 {tip.tripInfo.durationDays.min}–{tip.tripInfo.durationDays.max} days
-              </span>
-            )}
-          </div>
-        </div>
-      </Link>
-    </div>
-  )
-}
-
 // ── Grid card ──────────────────────────────────────────────────
-function TravelCard({ tip, index }: { tip: TravelTip; index: number }) {
-  const { ref, inView } = useInView()
-
-  // Count total overview items across all sections
-  const overviewCount = tip.overview
-    ? Object.values(tip.overview).reduce((sum, arr) => sum + (arr?.length ?? 0), 0)
-    : 0
-
+function TravelCard({ tip }: { tip: TravelTip }) {
   return (
     <div className="w-full max-w-5xl">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 pb-4">
-      
-      
       <Link to={`/travel/${tip.slug}`} className="group overflow-hidden bg-white p-4">
         <div className="aspect-video overflow-hidden mb-3">
           <img
@@ -184,37 +101,6 @@ function TravelCard({ tip, index }: { tip: TravelTip; index: number }) {
   )
 }
 
-// ── Overview section (shown on the index page as a preview) ────
-const OVERVIEW_SECTIONS: {
-  key: keyof Overview
-  label: string
-  emoji: string
-}[] = [
-  { key: "apps",        label: "Apps",        emoji: "📱" },
-  { key: "cafes",       label: "Cafés",       emoji: "☕" },
-  { key: "restaurants", label: "Restaurants", emoji: "🍽" },
-  { key: "shopping",    label: "Shopping",    emoji: "🛍" },
-  { key: "activities",  label: "Activities",  emoji: "🗺" },
-]
-
-function OverviewPreview({ tip }: { tip: TravelTip }) {
-  if (!tip.overview) return null
-  const sections = OVERVIEW_SECTIONS.filter(s => (tip.overview![s.key]?.length ?? 0) > 0)
-  if (sections.length === 0) return null
-
-  return (
-    <div className="mt-4 pt-4 border-t border-black/5">
-      <div className="flex gap-3 flex-wrap">
-        {sections.map(s => (
-          <span key={s.key} className="text-[0.68rem] text-black/40 flex items-center gap-1">
-            {s.emoji} {tip.overview![s.key]!.length} {s.label.toLowerCase()}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 // ── Main page ──────────────────────────────────────────────────
 type FilterKey = "all" | "budget" | "medium" | "luxury" | string
 
@@ -223,7 +109,7 @@ export default function TravelPage() {
   const [allLists, setAllLists] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [activeFilter, setActiveFilter] = useState<FilterKey>("all")
+  const [activeFilter] = useState<FilterKey>("all")
 
   useEffect(() => {
     Promise.all([
@@ -232,9 +118,6 @@ export default function TravelPage() {
     ]).then(() => setLoading(false)).catch(() => { setError(true); setLoading(false) })
   }, [])
 
-  const featured = tips.find(t => t.meta?.featured)
-  const regions = [...new Set(tips.map(t => t.destination?.region).filter(Boolean))] as string[]
-
   const filtered = tips.filter(t => {
     if (activeFilter === "all") return true
     if (["budget", "medium", "luxury"].includes(activeFilter))
@@ -242,16 +125,7 @@ export default function TravelPage() {
     return t.destination?.region === activeFilter
   })
 
-  // const gridTips = filtered.filter(t => t._id !== featured?._id)
   const gridTips = filtered.filter(t => t._id)
-
-  const filterOptions: { key: FilterKey; label: string }[] = [
-    { key: "all", label: "All" },
-    ...regions.map(r => ({ key: r, label: r })),
-    { key: "budget", label: "💸 Budget" },
-    { key: "medium", label: "💳 Mid-range" },
-    { key: "luxury", label: "💎 Luxury" },
-  ]
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -286,17 +160,14 @@ export default function TravelPage() {
           </p>
         </div>
 
-        {/* FEATURED */}
-        {/* {featured && <FeaturedCard tip={featured} />} */}
-
         {/* TRAVEL TIPS GRID */}
         <p className="text-left text-[0.7rem] tracking-[.22em] uppercase opacity-40 mb-3">
           Reiser
         </p>
         {gridTips.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-1 gap-x-6 gap-y-12 ">
-            {gridTips.map((tip, i) => (
-              <TravelCard key={tip._id} tip={tip} index={i} />
+            {gridTips.map((tip) => (
+              <TravelCard key={tip._id} tip={tip} />
             ))}
           </div>
         ) : tips.length === 0 ? (
@@ -326,7 +197,6 @@ export default function TravelPage() {
                 <h3 className="text-sm text-left mb-1 pl-2">{list.title}</h3>
                 <p className="text-xs text-left text-muted-foreground pl-2">
                   {list.items.length} valgte
-
                 </p>
               </Link>
             ))}

@@ -4,7 +4,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const cache = new Map();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-function getFromCache(key) {
+function getFromCache(key: string) {
   const data = cache.get(key);
   if (data && Date.now() - data.timestamp < CACHE_TTL) {
     return data.value;
@@ -13,7 +13,7 @@ function getFromCache(key) {
   return null;
 }
 
-function setInCache(key, value) {
+function setInCache(key: string, value: any) {
   cache.set(key, { value, timestamp: Date.now() });
 }
 

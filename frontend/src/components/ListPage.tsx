@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft, MessageCircle, Table, List, MapPin, X } from "lucide-react";
+import { ArrowLeft, MapPin } from "lucide-react";
 // import { allLists } from "./list-data";
 import { ImageWithFallback } from "./figma/ImageWithFallback.js";
 
@@ -15,7 +15,7 @@ export function ListPage() {
 
   const [list, setList] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<"list" | "table">("list");
+  const [viewMode] = useState<"list" | "table">("list");
   const [activeFilter, setActiveFilter] = useState<{ key: string; value: string } | null>(null);
 
   useEffect(() => {
@@ -55,13 +55,7 @@ export function ListPage() {
     }
   };
 
-  const getColumnLabel = (key: string) => {
-    return list.tableColumns?.find((c: any) => c.key === key)?.label || key;
-  };
 
-  const getColumnEmoji = (key: string) => {
-    return list.tableColumns?.find((c: any) => c.key === key)?.emoji || "";
-  };
 
   if (!list) {
     return (

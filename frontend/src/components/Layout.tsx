@@ -56,7 +56,6 @@ export function useLanguage() {
 export function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
-  const isMapPage = location.pathname === "/mapPage";
   const isBirthday = location.pathname === "/birthdayPage";
   const [locale, setLocale] = useState<Locale>(() => {
   const stored = typeof window !== "undefined" && localStorage.getItem("locale");

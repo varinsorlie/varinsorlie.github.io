@@ -16,11 +16,6 @@ interface CVGroup {
   entries: CVEntry[]
 }
 
-interface Skill {
-  name: string
-  level: number
-}
-
 const CV_DATA: CVGroup[] = [
   {
     year: "2026",
@@ -107,16 +102,6 @@ const CV_DATA: CVGroup[] = [
   },
 ]
 
-const SKILLS: Skill[] = [
-   { name: "Java", level: 100 },
-  { name: "Python", level: 100 },
-  { name: "Figma", level: 90 },
-  { name: "React", level: 90 },
-  { name: "UX research", level: 85 },
-  { name: "MongoDB", level: 75 },
- 
-]
-
 const FILTERS: { key: Category; label: string }[] = [
   { key: "all", label: "All" },
   { key: "work", label: "Work" },
@@ -152,7 +137,7 @@ function useInView(options?: IntersectionObserverInit) {
 }
 
 // Animated card
-function TimelineCard({ entry, index, isLeft }: { entry: CVEntry; index: number }) {
+function TimelineCard({ entry, index, isLeft }: { entry: CVEntry; index: number; isLeft: boolean }) {
   const { ref, inView } = useInView({ threshold: 0.15 })
   return (
     <div
@@ -187,26 +172,6 @@ function TimelineCard({ entry, index, isLeft }: { entry: CVEntry; index: number 
           ))}
         </div>
       )}
-    </div>
-  )
-}
-
-// Skill bar
-function SkillBar({ skill, index }: { skill: Skill; index: number }) {
-  const { ref, inView } = useInView({ threshold: 0.3 })
-  return (
-    <div
-      ref={ref}
-      style={{ transitionDelay: `${index * 60}ms` }}
-      className={`bg-white border border-black/10 rounded-xl p-4 transition-all duration-500 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-    >
-      <p className="text-sm font-semibold mb-2.5">{skill.name}</p>
-      <div className="h-[3px] bg-[#ede8dc] rounded-full overflow-hidden">
-        <div
-          className="h-full bg-[#f49242] rounded-full transition-all duration-1000 ease-out"
-          style={{ width: inView ? `${skill.level}%` : "0%" }}
-        />
-      </div>
     </div>
   )
 }

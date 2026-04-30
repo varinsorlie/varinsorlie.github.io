@@ -112,11 +112,6 @@ interface TravelTip {
 }
 
 // ── Helpers ────────────────────────────────────────────────────
-const BUDGET_LABEL: Record<string, string> = {
-  budget: "💸 Budget",
-  medium: "💳 Mid-range",
-  luxury: "💎 Luxury",
-}
 
 // ── Sub-components ─────────────────────────────────────────────
 function SectionHeading({ children }: { children: React.ReactNode }) {
@@ -197,7 +192,6 @@ export default function TravelDetailPage() {
   )
 
   const sortedItinerary = [...(tip.itinerary ?? [])].sort((a, b) => a.order - b.order)
-  const activeStop = sortedItinerary.find(s => s.city === activeCity)
 
   const categories = ["all", ...(tip.categories ?? [])]
   const filteredItems = activeCategory === "all"
@@ -223,7 +217,7 @@ export default function TravelDetailPage() {
           <>
             <SectionHeading>Foto album</SectionHeading>
             <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
-              {tip.photos!.map((url, i) => (
+              {tip.photos!.map((_url, i) => (
                 <div key={i} className="aspect-[4/3] overflow-hidden bg-black/5 shrink-0 w-64">
                   {/* <img
                     src={url}

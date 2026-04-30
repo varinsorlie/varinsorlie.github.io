@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Github, Mail, Linkedin, MapPin, Code2, BookOpen, Briefcase } from "lucide-react";
+import { Github, Mail, Linkedin, MapPin, Code2, BookOpen } from "lucide-react";
 import { motion } from "motion/react";
 // import { allLists } from "./list-data";
 import myImage1 from "../assets/IMG_5190.jpg"
@@ -18,7 +18,6 @@ import { BouncyAvatar } from "./BouncyAvatar.js";
 import { useEffect, useState } from "react";
 import { getLists } from "../data/api.js";
 
-import retro from "../assets/test.jpeg"; 
 import sunset from "../assets/IMG_0638.jpeg"
 
 export default function Home() {
